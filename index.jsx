@@ -2,8 +2,6 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Route, Routes, Link, BrowserRouter } from "react-router-dom";
 
-const IS_DEVELOPER_MODE = true;  // Toggle this to switch modes
-
 const testData = {
     maxHours: 40,
     activities: [
@@ -81,20 +79,7 @@ function LogHours({ data, updateActivityHours }) {
 }
 
 function Application() {
-    const [data, setData] = React.useState({
-        maxHours: 0,
-        activities: [],
-    });
-
-    React.useEffect(() => {
-        if (IS_DEVELOPER_MODE) {
-            setData(testData);
-        } else {
-            // If you had an API setup, you'd fetch the data like so:
-            // fetch('/api/getData').then(response => response.json()).then(data => setData(data))
-            console.error("API setup is not available!");
-        }
-    }, []);
+    const [data, setData] = React.useState(testData);
 
     const updateActivityHours = (activityName, hoursToAdd) => {
         const updatedActivities = data.activities.map(activity => {
