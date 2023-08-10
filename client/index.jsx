@@ -1,15 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Route, Routes, Link, BrowserRouter } from "react-router-dom";
-
-const testData = {
-    maxHours: 40,
-    activities: [
-        { name: 'Task A', hours: 5 },
-        { name: 'Task B', hours: 3 },
-        { name: 'Task C', hours: 2 },
-    ],
-};
+import {useEffect, useState} from "react";
 
 function FrontPage() {
     return (
@@ -23,81 +15,79 @@ function FrontPage() {
     );
 }
 
-function Activities({data}) {
+function useLoading(loadingFunction){
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState();
+    const [data, setData] = useState();
+
+    async function load() {
+        try {
+            setLoading(true);
+            setData(await loadingFunction());
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        load();
+    }, []);
+
+    return { loading, error, data };
+}
+
+async function fetchJSON(url) {
+    const res = await fetch(url)
+    if (!res.ok) {
+        throw new Error(`Failed to load ${res.status}: ${res.statusText}`);
+    }
+    return await res.json();
+}
+
+function Activities() {
+
+    const { loading, error, data } = useLoading(async () =>
+            fetchJSON("/api/activities")
+    );
+
+    if (loading) {
+        return <div>Loading...</div>
+    }
+    if (error){
+        return (
+            <div>
+            <h1>Error</h1>
+            <div>{error.toString()}</div>
+        </div>);
+    }
     return (
         <div>
             <h1>Activities</h1>
-            <ul>
-                {data.activities.map((activity, index) => (
-                    <li key={index}>{activity.name} - Logged hours: {activity.hours}</li>
+                {data.map((activity) => (
+                    <div key={activity.title}>{activity.title}</div>
                 ))}
-            </ul>
-            <Link to="/">Go back</Link>
         </div>
     );
 }
 
-function LogHours({ data, updateActivityHours }) {
-    const [hours, setHours] = React.useState(0);
-    const [selectedActivity, setSelectedActivity] = React.useState(data.activities[0].name);
-
-    const totalLoggedHours = data.activities.reduce((acc, curr) => acc + curr.hours, 0);
-
+function LogHours() {
     return (
         <div>
             <h1>Log hours</h1>
-            <p>Total logged hours: {totalLoggedHours}</p>
-            <p>Maximum hours: {data.maxHours} hours</p>
-            <label>
-                Activity:
-                <select value={selectedActivity} onChange={(e) => setSelectedActivity(e.target.value)}>
-                    {data.activities.map((activity, index) => (
-                        <option key={index} value={activity.name}>{activity.name}</option>
-                    ))}
-                </select>
-            </label>
-            <input
-                type="number"
-                value={hours}
-                onChange={(e) => setHours(parseFloat(e.target.value))}
-                placeholder="Hours to log"
-            />
-            <button
-                onClick={() => {
-                    if ((totalLoggedHours + hours) <= data.maxHours) {
-                        updateActivityHours(selectedActivity, hours);
-                    } else {
-                        alert("Exceeding max hours!");
-                    }
-                }}
-            >
-                Log Hours
-            </button>
             <Link to="/">Go back</Link>
         </div>
     );
 }
 
 function Application() {
-    const [data, setData] = React.useState(testData);
-
-    const updateActivityHours = (activityName, hoursToAdd) => {
-        const updatedActivities = data.activities.map(activity => {
-            if (activity.name === activityName) {
-                return { ...activity, hours: activity.hours + hoursToAdd };
-            }
-            return activity;
-        });
-
-        setData({ ...data, activities: updatedActivities });
-    };
-
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<FrontPage />} />
-                <Route path="/Activities" element={<Activities data={data} />} />
-                <Route path="/LogHours" element={<LogHours data={data} updateActivityHours={updateActivityHours} />} />
+                <Route path="/Activities" element={<Activities  />} />
+                <Route path="/LogHours" element={<LogHours />} />
             </Routes>
         </BrowserRouter>
     );
