@@ -49,31 +49,87 @@ async function fetchJSON(url) {
 }
 
 function Activities() {
+    const { loading, error, data, setData } = useLoading(async () => fetchJSON("/api/activities"));
 
-    const { loading, error, data } = useLoading(async () =>
-        fetchJSON("/api/activities")
-    );
+    const [editingActivity, setEditingActivity] = useState(null);
+    const [editedTitle, setEditedTitle] = useState("");
+
+    const deleteActivity = (title) => {
+        fetch(`/api/activities/${title}`, { method: 'DELETE' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(() => {
+                const updatedActivities = data.filter(activity => activity.title !== title);
+                setData(updatedActivities);
+            })
+            .catch(console.error);
+    };
+
+    const startEditing = (title) => {
+        setEditingActivity(title);
+        setEditedTitle(title);
+    };
+
+    const saveEditedActivity = (originalTitle) => {
+        fetch(`/api/activities/${originalTitle}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: editedTitle }),
+        })
+            .then(() => {
+                const updatedActivities = data.map(activity => activity.title === originalTitle ? { title: editedTitle } : activity);
+                setData(updatedActivities);
+                setEditingActivity(null);
+                setEditedTitle("");
+            })
+            .catch(console.error);
+    };
 
     if (loading) {
         return <div>Loading...</div>
     }
-    if (error){
+    if (error) {
         return (
             <div>
                 <h1>Error</h1>
                 <div>{error.toString()}</div>
-            </div>);
+            </div>
+        );
     }
+
     return (
         <div>
             <h1>Activities</h1>
             {data.map((activity) => (
-                <div key={activity.title}>{activity.title}</div>
+                <div key={activity.title}>
+                    {editingActivity === activity.title ? (
+                        <>
+                            <input
+                                type="text"
+                                value={editedTitle}
+                                onChange={(e) => setEditedTitle(e.target.value)}
+                            />
+                            <button onClick={() => saveEditedActivity(activity.title)}>Save</button>
+                        </>
+                    ) : (
+                        <>
+                            {activity.title}
+                            <button onClick={() => startEditing(activity.title)}>Edit</button>
+                            <button onClick={() => deleteActivity(activity.title)}>Delete</button>
+                        </>
+                    )}
+                </div>
             ))}
             <Link to="/">Go back</Link>
         </div>
     );
 }
+
+
 
 function LogHours() {
     const [activities, setActivities] = useState([]);
