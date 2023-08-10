@@ -81,15 +81,26 @@ function LogHours({ data, updateActivityHours }) {
 function Application() {
     const [data, setData] = React.useState(testData);
 
-    const updateActivityHours = (activityName, hoursToAdd) => {
-        const updatedActivities = data.activities.map(activity => {
-            if (activity.name === activityName) {
-                return { ...activity, hours: activity.hours + hoursToAdd };
-            }
-            return activity;
+    const updateActivityHours = async (activityName, hoursToAdd) => {
+        const response = await fetch(`/api/activity/${activityName}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ hours: hoursToAdd })
         });
 
-        setData({ ...data, activities: updatedActivities });
+        const result = await response.json();
+        if (result.message === 'Hours updated') {
+            // Update local state
+            const updatedActivities = data.activities.map(activity => {
+                if (activity.name === activityName) {
+                    return { ...activity, hours: activity.hours + hoursToAdd };
+                }
+                return activity;
+            });
+            setData({ ...data, activities: updatedActivities });
+        }
     };
 
     return (
