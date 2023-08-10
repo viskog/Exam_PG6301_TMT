@@ -3,6 +3,7 @@ import * as path from "path";
 import {ActivitiesApi} from "./activitiesApi.js";
 import {MongoClient} from "mongodb";
 import dotenv from "dotenv";
+import bodyParser from 'body-parser';
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ mongoClient.connect().then(async () => {
 
 app.use(express.static("../client/dist/"));
 
+app.use(bodyParser.json());
+
 app.use((req, res, next) => {
     if (req.method === "GET" && !req.path.startsWith("/api")) {
         return res.sendFile(path.resolve("../client/dist/index.html"));
@@ -24,6 +27,6 @@ app.use((req, res, next) => {
     }
 });
 
-const server = app.listen(process.env.PORT || 3001, () => {
+const server = app.listen(process.env.PORT || 3000, () => {
     console.log(`Started on http://localhost:${server.address().port}`)
 })
