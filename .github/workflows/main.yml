@@ -13,8 +13,10 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
 
-      - run: npm run
+      - run: cd client && npm install   # Make sure to install the client dependencies
+      - run: cd client && npm test -- --coverage   # Run tests with coverage
       - name: Collect coverage
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           coverage-file: ./client/coverage/lcov.info
+
