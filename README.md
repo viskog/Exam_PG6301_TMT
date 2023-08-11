@@ -11,11 +11,24 @@
 
 To build and run the app you need to do this:
 
+Ensure you have the required environment tools:
 
+* Node.js and npm (Node.js package manager)
+* MongoDB installed and running locally or a MongoDB Atlas cluster set up
+* Clone the repository
+* Run "npm install"
+* run "cd client" -> "npm install" -> "cd.." -> "cd server" > "npm install" in the terminal
+* The .env file should be in the repository but if not create a .env file inside the server folder. Here is the mongoDB url: MONGODB_URL=mongodb+srv://visk010:HUhF4EXYRFarQvbe@cluster0.c3x0cky.mongodb.net/
+* type "npm run dev" in the terminal
+* To build both client and server type "npm run build" in terminal
+* To run in production mode type "npm start" in the terminal
+* This will run the server and you can access it at http://localhost:3000/
 
 I managed to complete these tasks:
 
 I did not get any longer because i did not understand everything, but i hope this is sufficent for a standing grade since this is the last grade i need to complete my bachelors degree.
+
+I had big problems with getting the testing to work, i tried everything and i dont know how i could fix it.
 
 * **R1** Requirements **necessary**, but not **sufficient**, for an **E**
 * Write a homepage with React
