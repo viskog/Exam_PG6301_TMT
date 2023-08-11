@@ -5,10 +5,15 @@ on:
     branches:
       - main
 
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - run: npm ci
+      - run: npm run test
       - name: Collect coverage
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
