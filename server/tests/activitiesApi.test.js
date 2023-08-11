@@ -1,5 +1,4 @@
-// activitiesApi.test.js
-import express from 'express';
+const express = require('express');
 import request from 'supertest';
 import { ActivitiesApi } from 'server/activitiesApi.js'; // Adjust the path
 
