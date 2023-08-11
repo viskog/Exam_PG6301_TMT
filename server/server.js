@@ -1,6 +1,6 @@
 import express from "express";
 import * as path from "path";
-import {LoggedHoursApi} from "./loggedHoursApi.js";
+import {LoggedHoursApi} from "./LoggedHoursApi.js";
 import {ActivitiesApi} from "./activitiesApi.js";
 import {MongoClient} from "mongodb";
 import dotenv from "dotenv";
