@@ -1,52 +1,20 @@
-name: CI
+name: Run test
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  client-tests:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v2
-
-    - name: Use Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-
-    - name: Install client dependencies and run tests
-      working-directory: ./client
-      run: |
-        npm ci
-        npm test
-
-  server-tests:
-    runs-on: ubuntu-latest
-
-    services:
-      mongodb:
-        image: mongo:latest
-        ports:
-        - 27017:27017
-
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v2
-
-    - name: Use Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-
-    - name: Install server dependencies and run tests
-      working-directory: ./server
-      run: |
-        npm ci
-        npm test
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: npm ci
+      - run: npm run verify
+      - name: Collect coverage
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          coverage-file: ./client/coverage/lcov.info
