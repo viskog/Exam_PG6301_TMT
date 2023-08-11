@@ -224,3 +224,5 @@ function Application() {
 
 
 ReactDOM.render(<Application />, document.getElementById("app"));
+export default class FrontPage {
+}
