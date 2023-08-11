@@ -1,4 +1,4 @@
-name: CI/CD Workflow
+name: Run test
 
 on:
   push:
@@ -6,62 +6,15 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [16.x]
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    # Client
-    - name: Setup Node.js ${{ matrix.node-version }} for client
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Cache node modules for client
-      uses: actions/cache@v2
-      with:
-        path: client/node_modules
-        key: client-node-modules-${{ hashFiles('client/package-lock.json') }}
-
-    - name: Install dependencies for client
-      run: |
-        cd client
-        npm install
-
-    - name: Build client
-      run: |
-        cd client
-        npm run build
-
-    - name: Test client
-      run: |
-        cd client
-        npm test
-
-    # Server
-    - name: Setup Node.js ${{ matrix.node-version }} for server
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Cache node modules for server
-      uses: actions/cache@v2
-      with:
-        path: server/node_modules
-        key: server-node-modules-${{ hashFiles('server/package-lock.json') }}
-
-    - name: Install dependencies for server
-      run: |
-        cd server
-        npm install
-
-    - name: Test server
-      run: |
-        cd server
-        npm test
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: npm ci
+      - run: npm run verify
+      - name: Collect coverage
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          coverage-file: ./client/coverage/lcov.info
