@@ -1,4 +1,4 @@
-name: Run test
+name: CI/CD Workflow
 
 on:
   push:
@@ -6,17 +6,62 @@ on:
       - main
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [16.x]  # You can adjust this to other versions if necessary
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - run: cd client && npm install   # Make sure to install the client dependencies
-      - run: cd client && npm test -- --coverage   # Run tests with coverage
-      - name: Collect coverage
-        uses: ArtiomTr/jest-coverage-report-action@v2
-        with:
-          coverage-file: ./client/coverage/lcov.info
+    # Client
+    - name: Setup Node.js ${{ matrix.node-version }} for client
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
 
+    - name: Cache node modules for client
+      uses: actions/cache@v2
+      with:
+        path: client/node_modules
+        key: client-node-modules-${{ hashFiles('client/package-lock.json') }}
+
+    - name: Install dependencies for client
+      run: |
+        cd client
+        npm install
+
+    - name: Build client
+      run: |
+        cd client
+        npm run build
+
+    - name: Test client
+      run: |
+        cd client
+        npm test
+
+    # Server
+    - name: Setup Node.js ${{ matrix.node-version }} for server
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Cache node modules for server
+      uses: actions/cache@v2
+      with:
+        path: server/node_modules
+        key: server-node-modules-${{ hashFiles('server/package-lock.json') }}
+
+    - name: Install dependencies for server
+      run: |
+        cd server
+        npm install
+
+    - name: Test server
+      run: |
+        cd server
+        npm test
