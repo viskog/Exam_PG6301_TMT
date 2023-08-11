@@ -1,4 +1,3 @@
-// loggedHoursApi.test.js
 import express from 'express';
 import request from 'supertest';
 import { LoggedHoursApi } from 'server/LoggedHoursApi.js'; // Adjust the path

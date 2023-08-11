@@ -1,6 +1,5 @@
-// Activities.test.jsx
 import { render, screen } from '@testing-library/react';
-import Activities from '.client/index.jsx'; // Adjust the path
+import Activities from '.client/index.jsx';
 
 jest.mock('./useLoading', () => ({
     useLoading: jest.fn(() => ({

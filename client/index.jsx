@@ -137,7 +137,6 @@ function LogHours() {
     const [hours, setHours] = useState(0);
 
     useEffect(() => {
-        // Fetch available activities
         fetch("/api/activities")
             .then(res => res.json())
             .then(data => setActivities(data))
@@ -157,7 +156,6 @@ function LogHours() {
         })
             .then(response => response.json())
             .then(data => {
-                // Handle the response here, e.g. show a message that the hours have been logged
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -196,7 +194,7 @@ function DisplayLoggedHours() {
     }
     return (
         <div>
-            <h1>Aggregated Logged Hours</h1>
+            <h1>Logged Hours</h1>
             <ul>
                 {data.map(entry => (
                     <li key={entry._id}>
