@@ -1,5 +1,5 @@
 const express = require('express');
-import request from 'supertest';
+const request = require('supertest');
 import { ActivitiesApi } from 'server/activitiesApi.js'; // Adjust the path
 
 const app = express();
