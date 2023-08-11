@@ -1,6 +1,6 @@
 const express = require('express');
 const request = require('supertest');
-import { ActivitiesApi } from 'server/activitiesApi.js'; // Adjust the path
+const { ActivitiesApi } = require('server/activitiesApi.js');
 
 const app = express();
 const mockActivities = [{ title: 'Activity 1' }, { title: 'Activity 2' }];
